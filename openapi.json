@@ -1,0 +1,3152 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Credit Monitoring Companies",
+    "description": "Monitoring Risk and Credit Data for Companies",
+    "termsOfService": "https://www.bisnode.com",
+    "contact": {
+      "name": "Bisnode",
+      "url": "https://www.bisnode.com",
+      "email": "api-support@bisnode.com"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://www.bisnode.com"
+    },
+    "version": "1.0.171"
+  },
+  "servers": [
+    {
+      "url": "http://api.bisnode.com/credit-monitoring-companies/v1",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "OAuth2": [
+        "credit_data_monitoring"
+      ]
+    }
+  ],
+  "paths": {
+    "/portfolio/companies": {
+      "get": {
+        "tags": [
+          "Portfolio"
+        ],
+        "summary": "Get Portfolio Companies",
+        "description": "Get the list of portfolio companies, paginated and sorted, filtered by rating",
+        "operationId": "findPortfolioCompanies",
+        "parameters": [
+          {
+            "name": "rating",
+            "in": "query",
+            "description": "Retrieve only companies with a certain rating value.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "AAA",
+                "AA",
+                "A",
+                "B",
+                "C",
+                "NEW",
+                "MISSING",
+                "-"
+              ]
+            },
+            "example": "AAA"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "Retrieve only companies with a certain country",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "SE",
+                  "FI",
+                  "NO",
+                  "DK"
+                ]
+              }
+            },
+            "example": "SE"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sorting property for companies.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "ADDED_DATE",
+              "enum": [
+                "ADDED_DATE",
+                "DUNS",
+                "NAME",
+                "RATING",
+                "LIMIT",
+                "REGISTRATION_NUMBER",
+                "COUNTRY"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sorting direction for companies.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "DESC",
+              "enum": [
+                "ASC",
+                "DESC"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiCompanyResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Portfolio"
+        ],
+        "summary": "Add Companies to Portfolio",
+        "description": "Adds the listed Companies to the Portfolio",
+        "operationId": "addCompaniesToPortfolio",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiCompanyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiAddCompanyResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Portfolio"
+        ],
+        "summary": "Remove Companies from Portfolio",
+        "description": "Deletes the listed Companies from the Portfolio. They are also removed from the Categories.",
+        "operationId": "deleteCompaniesFromPortfolio",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiCompanyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApiPortfolioCompanyReference"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/categories": {
+      "get": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "Get Categories in Portfolio with paging params provided.",
+        "description": "Retrieve list of categories of the current customer Portfolio, supports pagination params page number called number(default =0) and pageSize - size(default=50), first page is page with index 0 .",
+        "operationId": "getCategories",
+        "parameters": [
+          {
+            "name": "number",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved categories page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApiCategoryPage"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "Add Category to Portfolio",
+        "description": "Add new Category with provided name to current customer Portfolio.",
+        "operationId": "addCategoryToPortfolio",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiCategoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful adding of category to portfolio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiCategoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Could not add because category with same name already exists in the portfolio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Only in sandbox. Could not add category because limit of number of categories per portfolio has been reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/categories/{categoryId}": {
+      "put": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "Rename Category",
+        "description": "Rename a Category",
+        "operationId": "updateCategoryName",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "maxLength": 40,
+              "minLength": 1,
+              "pattern": "[0-9a-z\\-]+",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiCategoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the name of the given category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiCategoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Could not update the name because category with same name already exists in the portfolio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "Delete Category",
+        "description": "Delete the Category",
+        "operationId": "deleteCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "maxLength": 40,
+              "minLength": 1,
+              "pattern": "[0-9a-z\\-]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful deletion of category"
+          },
+          "404": {
+            "description": "Category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/categories/{categoryId}/companies": {
+      "get": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "Get Companies in Category",
+        "description": "Get the list of companies in category, paginated and sorted, filtered by rating",
+        "operationId": "findCategoryCompanies",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "maxLength": 40,
+              "minLength": 1,
+              "pattern": "[0-9a-z\\-]+",
+              "type": "string"
+            }
+          },
+          {
+            "name": "rating",
+            "in": "query",
+            "description": "Retrieve only companies with a certain rating value.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "AAA",
+                "AA",
+                "A",
+                "B",
+                "C",
+                "NEW",
+                "MISSING",
+                "-"
+              ]
+            },
+            "example": "AAA"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "Retrieve only companies with a certain country",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "SE",
+                  "FI",
+                  "NO",
+                  "DK"
+                ]
+              }
+            },
+            "example": "SE"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sorting property for companies.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "ADDED_DATE",
+              "enum": [
+                "ADDED_DATE",
+                "DUNS",
+                "NAME",
+                "RATING",
+                "LIMIT",
+                "REGISTRATION_NUMBER",
+                "COUNTRY"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sorting direction for companies.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "DESC",
+              "enum": [
+                "ASC",
+                "DESC"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiCompanyResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "Add Companies to Category",
+        "description": "Adds the listed Companies to the Category",
+        "operationId": "addCompaniesToCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "maxLength": 40,
+              "minLength": 1,
+              "pattern": "[0-9a-z\\-]+",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiCompanyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful adding of companies to category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiAddCompanyResponse"
+                }
+              }
+            }
+          },
+          "207": {
+            "description": "Partial success in adding the companies to category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiAddCompanyResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "Check if Company is in Category",
+        "description": "Fetches a company from a category",
+        "operationId": "getCompanyFromCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "maxLength": 40,
+              "minLength": 1,
+              "pattern": "[0-9a-z\\-]+",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiCompanyId"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully fetched the company from category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiBasicCompany"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company or category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "Remove Companies from Category",
+        "description": "Deletes the listed Companies from Category",
+        "operationId": "deleteCompaniesFromCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "maxLength": 40,
+              "minLength": 1,
+              "pattern": "[0-9a-z\\-]+",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiCompanyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApiPortfolioCompanyReference"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/references": {
+      "post": {
+        "tags": [
+          "References"
+        ],
+        "summary": "Add References to Companies",
+        "description": "Add references to the specified companies. The companies must be listed in the Portfolio.",
+        "operationId": "addReferenceToCompany",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiReferenceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApiReference"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "References"
+        ],
+        "summary": "Remove References from Companies",
+        "description": "Delete given References from the specified companies. The companies must be listed in the Portfolio.",
+        "operationId": "deleteReferencesFromCompanies",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiReferenceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/portfolio/events": {
+      "get": {
+        "tags": [
+          "Portfolio"
+        ],
+        "summary": "Get Monitoring Events",
+        "description": "Deprecated. Use the events POST endpoint instead.",
+        "operationId": "findEventsForPortfolioOld",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "The beginning of the interval for which to retrieve events, maximum one year back.",
+            "required": false,
+            "schema": {
+              "pattern": "yyyy-MM-ddThh:mm:ss",
+              "type": "string",
+              "description": "The beginning of the interval for which to retrieve events, maximum one year back.",
+              "example": "2020-11-03T07:00:00"
+            },
+            "example": "2020-11-03T07:00:00"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "The end of the interval for which to retrieve events.",
+            "required": false,
+            "schema": {
+              "pattern": "yyyy-MM-ddThh:mm:ss",
+              "type": "string",
+              "description": "The end of the interval for which to retrieve events.",
+              "example": "2021-04-03T07:00:00"
+            },
+            "example": "2021-04-03T07:00:00"
+          },
+          {
+            "name": "eventCategory",
+            "in": "query",
+            "description": "Event category",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Event category"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "Two-digit country code  of the company",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Two-digit country code  of the company",
+              "example": "SE"
+            },
+            "example": "SE"
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "The language used for the events descriptions.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "The language used for the events descriptions.",
+              "example": "en"
+            },
+            "example": "en"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sorting property for events.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "EVENT_DATE",
+              "enum": [
+                "EVENT_DATE",
+                "REGISTRATION_DATE",
+                "NAME",
+                "LIMIT",
+                "RATING"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sorting direction for events.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "DESC",
+              "enum": [
+                "ASC",
+                "DESC"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMonitoringEventResponseOld"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      },
+      "post": {
+        "tags": [
+          "Portfolio"
+        ],
+        "summary": "Get Monitoring Events",
+        "description": "Get the events for the companies in the portfolio in a paginated form. Allows to filter and sort events.",
+        "operationId": "findEventsForPortfolio",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiCompanyEventSearchCriteria"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMonitoringEventPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/company": {
+      "post": {
+        "tags": [
+          "Portfolio"
+        ],
+        "summary": "Check Company in Portfolio",
+        "description": "Checks if a company exists in the portfolio",
+        "operationId": "checkCompanyInPortfolio",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiCompanyId"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiCompanyExistsInPortfolioResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/categories/{categoryId}/events": {
+      "post": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "Get Monitoring Events of Category",
+        "description": "Get the events for a category in a paginated form. Allows to filter and sort events.",
+        "operationId": "findEventsForCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "maxLength": 40,
+              "minLength": 1,
+              "pattern": "[0-9a-z\\-]+",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiEventSearchCriteria"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMonitoringEventPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio": {
+      "get": {
+        "tags": [
+          "Portfolio"
+        ],
+        "summary": "Basic Portfolio Information",
+        "description": "Get the basic portfolio information like the portfolio status, the date when it was created, the date when it was last modified and the number of companies in the portfolio.",
+        "operationId": "getPortfolio",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiPortfolioResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/events/category/{country}": {
+      "get": {
+        "tags": [
+          "Portfolio"
+        ],
+        "summary": "All Event Codes grouped by Event Category",
+        "description": "Get the event codes by category. Allows to filter by categories",
+        "operationId": "getEventCodesByCategory",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SE",
+                "FI",
+                "NO",
+                "DK"
+              ]
+            }
+          },
+          {
+            "name": "eventCategories",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/EventCodeDescription"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portfolio/company/{country}/{registrationNumber}": {
+      "get": {
+        "tags": [
+          "Portfolio"
+        ],
+        "summary": "Get Monitoring Events for a Company",
+        "description": "Deprecated. Use the main events POST endpoint instead. Filter for company id in that endpoint.",
+        "operationId": "findEventsForCompanyOld",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SE",
+                "FI",
+                "NO",
+                "DK"
+              ]
+            }
+          },
+          {
+            "name": "registrationNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "The beginning of the interval for which to retrieve events, maximum one year back.",
+            "required": false,
+            "schema": {
+              "pattern": "yyyy-MM-ddThh:mm:ss",
+              "type": "string",
+              "description": "The beginning of the interval for which to retrieve events, maximum one year back.",
+              "example": "2020-11-03T07:00:00"
+            },
+            "example": "2020-11-03T07:00:00"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "The end of the interval for which to retrieve events.",
+            "required": false,
+            "schema": {
+              "pattern": "yyyy-MM-ddThh:mm:ss",
+              "type": "string",
+              "description": "The end of the interval for which to retrieve events.",
+              "example": "2021-04-03T07:00:00"
+            },
+            "example": "2021-04-03T07:00:00"
+          },
+          {
+            "name": "eventCategory",
+            "in": "query",
+            "description": "Event category",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Event category"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "The language used for the events descriptions.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "The language used for the events descriptions.",
+              "example": "en"
+            },
+            "example": "en"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sorting property for events.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "EVENT_DATE",
+              "enum": [
+                "EVENT_DATE",
+                "REGISTRATION_DATE",
+                "NAME",
+                "LIMIT",
+                "RATING"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sorting direction for events.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "DESC",
+              "enum": [
+                "ASC",
+                "DESC"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMonitoringEventResponseOld"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      }
+    },
+    "/references/all": {
+      "delete": {
+        "tags": [
+          "References"
+        ],
+        "summary": "Remove all References from Companies",
+        "description": "Delete all References from the specified companies. The companies must be listed in the Portfolio.",
+        "operationId": "deleteAllReferencesFromCompanies",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ApiReferenceCompanyId"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiCompanyId": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "SE",
+              "FI",
+              "NO",
+              "DK"
+            ]
+          },
+          "registrationNumber": {
+            "type": "string"
+          },
+          "duns": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiCompanyRequest": {
+        "required": [
+          "companyIds"
+        ],
+        "type": "object",
+        "properties": {
+          "companyIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiCompanyId"
+            }
+          }
+        }
+      },
+      "ApiAddCompanyError": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "SE",
+              "FI",
+              "NO",
+              "DK"
+            ]
+          },
+          "registrationNumber": {
+            "type": "string"
+          },
+          "duns": {
+            "type": "string"
+          },
+          "errorType": {
+            "type": "string",
+            "enum": [
+              "ALREADY_LISTED",
+              "NON_ALLOWED_COMPANY",
+              "NOT_IN_PORTFOLIO",
+              "UNKNOWN_COMPANY"
+            ]
+          }
+        }
+      },
+      "ApiAddCompanyResponse": {
+        "type": "object",
+        "properties": {
+          "companies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiBasicCompany"
+            }
+          },
+          "companiesUnableToAdd": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiAddCompanyError"
+            }
+          }
+        }
+      },
+      "ApiBasicCompany": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "SE",
+              "FI",
+              "NO",
+              "DK"
+            ]
+          },
+          "registrationNumber": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "legalForm": {
+            "type": "string"
+          },
+          "rating": {
+            "$ref": "#/components/schemas/Code"
+          },
+          "duns": {
+            "type": "string"
+          },
+          "references": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "addedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "limit": {
+            "$ref": "#/components/schemas/ApiMonetaryAmount"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "NOTSTARTED_OR_DORMANT"
+            ]
+          }
+        }
+      },
+      "ApiMonetaryAmount": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "UNDEFINED",
+              "AED",
+              "AFN",
+              "ALL",
+              "AMD",
+              "ANG",
+              "AOA",
+              "ARS",
+              "AUD",
+              "AWG",
+              "AZN",
+              "BAM",
+              "BBD",
+              "BDT",
+              "BGN",
+              "BHD",
+              "BIF",
+              "BMD",
+              "BND",
+              "BOB",
+              "BOV",
+              "BRL",
+              "BSD",
+              "BTN",
+              "BWP",
+              "BYN",
+              "BYR",
+              "BZD",
+              "CAD",
+              "CDF",
+              "CHE",
+              "CHF",
+              "CHW",
+              "CLF",
+              "CLP",
+              "CNY",
+              "COP",
+              "COU",
+              "CRC",
+              "CUC",
+              "CUP",
+              "CVE",
+              "CZK",
+              "DJF",
+              "DKK",
+              "DOP",
+              "DZD",
+              "EGP",
+              "ERN",
+              "ETB",
+              "EUR",
+              "FJD",
+              "FKP",
+              "GBP",
+              "GEL",
+              "GHS",
+              "GIP",
+              "GMD",
+              "GNF",
+              "GTQ",
+              "GYD",
+              "HKD",
+              "HNL",
+              "HRK",
+              "HTG",
+              "HUF",
+              "IDR",
+              "ILS",
+              "INR",
+              "IQD",
+              "IRR",
+              "ISK",
+              "JMD",
+              "JOD",
+              "JPY",
+              "KES",
+              "KGS",
+              "KHR",
+              "KMF",
+              "KPW",
+              "KRW",
+              "KWD",
+              "KYD",
+              "KZT",
+              "LAK",
+              "LBP",
+              "LKR",
+              "LRD",
+              "LSL",
+              "LTL",
+              "LYD",
+              "MAD",
+              "MDL",
+              "MGA",
+              "MKD",
+              "MMK",
+              "MNT",
+              "MOP",
+              "MRO",
+              "MRU",
+              "MUR",
+              "MVR",
+              "MWK",
+              "MXN",
+              "MXV",
+              "MYR",
+              "MZN",
+              "NAD",
+              "NGN",
+              "NIO",
+              "NOK",
+              "NPR",
+              "NZD",
+              "OMR",
+              "PAB",
+              "PEN",
+              "PGK",
+              "PHP",
+              "PKR",
+              "PLN",
+              "PYG",
+              "QAR",
+              "RON",
+              "RSD",
+              "RUB",
+              "RUR",
+              "RWF",
+              "SAR",
+              "SBD",
+              "SCR",
+              "SDG",
+              "SEK",
+              "SGD",
+              "SHP",
+              "SLL",
+              "SOS",
+              "SRD",
+              "SSP",
+              "STD",
+              "STN",
+              "SVC",
+              "SYP",
+              "SZL",
+              "THB",
+              "TJS",
+              "TMT",
+              "TND",
+              "TOP",
+              "TRY",
+              "TTD",
+              "TWD",
+              "TZS",
+              "UAH",
+              "UGX",
+              "USD",
+              "USN",
+              "USS",
+              "UYI",
+              "UYU",
+              "UZS",
+              "VEF",
+              "VES",
+              "VND",
+              "VUV",
+              "WST",
+              "XAF",
+              "XAG",
+              "XAU",
+              "XBA",
+              "XBB",
+              "XBC",
+              "XBD",
+              "XCD",
+              "XDR",
+              "XOF",
+              "XPD",
+              "XPF",
+              "XPT",
+              "XSU",
+              "XTS",
+              "XUA",
+              "XXX",
+              "YER",
+              "ZAR",
+              "ZMW",
+              "ZWL"
+            ]
+          }
+        }
+      },
+      "Code": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiCategoryRequest": {
+        "type": "object",
+        "properties": {
+          "categoryName": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      },
+      "ApiError": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "statusText": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "subErrors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiValidationError"
+            }
+          },
+          "requestId": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiValidationError": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "rejectedValue": {
+            "type": "object"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiCategoryResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "categoryName": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiCompanyReference": {
+        "required": [
+          "company"
+        ],
+        "type": "object",
+        "properties": {
+          "company": {
+            "$ref": "#/components/schemas/ApiReferenceCompanyId"
+          },
+          "references": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ApiReferenceCompanyId": {
+        "required": [
+          "country",
+          "registrationNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "SE",
+              "FI",
+              "NO",
+              "DK"
+            ]
+          },
+          "registrationNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiReferenceRequest": {
+        "type": "object",
+        "properties": {
+          "references": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiCompanyReference"
+            }
+          }
+        }
+      },
+      "ApiReference": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "$ref": "#/components/schemas/ApiReferenceCompanyId"
+          },
+          "references": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ApiBasicInformationCategoryFilter": {
+        "required": [
+          "eventCategory"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiEventCategoryFilter"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventCodes": {
+                "uniqueItems": true,
+                "type": "array",
+                "description": "The event codes to which to limit the events in the category",
+                "items": {
+                  "type": "string",
+                  "description": "The event codes to which to limit the events in the category",
+                  "enum": [
+                    "ACTIVE_CHANGED",
+                    "ADJUSTED_NAME",
+                    "BUSINESS_REGISTRY_CHANGED",
+                    "CHANGE_ARTICLES_OF_ASSOCIATION_NAME_NOTIFIED",
+                    "CHANGE_ARTICLES_OF_ASSOCIATION_NOTIFIED",
+                    "CHANGE_ARTICLES_OF_ASSOCIATION_RESIDENCE_NOTIFIED",
+                    "CHANGE_POSTAL_ADDRESS_NOTIFIED",
+                    "INDUSTRYCODE_CHANGED",
+                    "INDUSTRY_CODE_CHANGED",
+                    "LEGAL_ADDRESS_CHANGED",
+                    "LEGAL_FORM_CHANGED",
+                    "NAME_CHANGED",
+                    "PHONE_NUMBER_CHANGED",
+                    "POSTAL_ADDRESS_CHANGED",
+                    "REGISTRATION_ADDITIONAL_NAMES_NOTIFIED",
+                    "VISITING_ADDRESS_CHANGED",
+                    "ADMINISTRATIVE_ANNOUNCEMENT",
+                    "BUSINESS_ADDRESS_CHANGED",
+                    "BUSINESS_ADDRESS_CORRECTED",
+                    "BUSINESS_ENTERPRISE_NAME_CHANGED",
+                    "BUSINESS_ENTERPRISE_NAME_CORRECTED",
+                    "CONDITIONS_FOR_THE_ESTABLISHMENT_CORRECTED",
+                    "CONVERSION_OF_PLC_SOCIETAS_EUROPEA",
+                    "DATE_OF_ARTICLES_OF_ASSOCIATION",
+                    "DATE_OF_ASSOCIATION_CORRECTED",
+                    "ENTERPRISE_INDUSTRY_CHANGED",
+                    "ENTERPRISE_TYPE_INDUSTRY_CORRECTED",
+                    "EXEMPTION_NOTICE_FROM_REQUIREMENT_OF_STATEMENT",
+                    "EXEMPTION_REQUIREMENT_OF_STATEMENT_DECLARED",
+                    "MANDATORY_NOTIFIABLE_AGREEMENT",
+                    "MANDATORY_NOTIFIABLE_AGREEMENT_CORRECTED",
+                    "OBJECTIVE_CORRECTED",
+                    "OBJECTIVE_LAID_DOWN_IN_ARTICLES_OF_ASSOCIATION",
+                    "PUBLIC_ADMINISTRATION",
+                    "RELOCATION_DECISION_ANNOUNCED",
+                    "RELOCATION_PLAN_ANNOUNCED"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ApiCompanyEventSearchCriteria": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "pattern": "yyyy-MM-ddThh:mm:ss",
+            "type": "string",
+            "description": "The beginning of the interval for which to retrieve events, maximum one year back.",
+            "format": "date-time"
+          },
+          "endDate": {
+            "pattern": "yyyy-MM-ddThh:mm:ss",
+            "type": "string",
+            "description": "The end of the interval for which to retrieve events.",
+            "format": "date-time"
+          },
+          "eventFilters": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiEventCategoryFilter"
+            }
+          },
+          "countries": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Two-digit country codes of the companies",
+              "example": "SE",
+              "enum": [
+                "SE",
+                "FI",
+                "NO",
+                "DK"
+              ]
+            }
+          },
+          "language": {
+            "type": "string",
+            "description": "The language used for the events descriptions.",
+            "example": "en",
+            "default": "en",
+            "enum": [
+              "dk",
+              "en",
+              "fi",
+              "no",
+              "sv"
+            ]
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageCriteria"
+          },
+          "sorting": {
+            "$ref": "#/components/schemas/ApiEventSortCriteria"
+          },
+          "companyId": {
+            "$ref": "#/components/schemas/ApiReferenceCompanyId"
+          }
+        }
+      },
+      "ApiEventCategoryFilter": {
+        "required": [
+          "eventCategory"
+        ],
+        "type": "object",
+        "properties": {
+          "eventCategory": {
+            "type": "string",
+            "description": "Limit events to this event category",
+            "enum": [
+              "INSOLVENCY_INACTIVITY",
+              "RISK",
+              "PAYMENT_ABILITY",
+              "REGISTRATION_STATUS",
+              "FINANCIAL_INFORMATION",
+              "OWNERSHIP_GROUP_STRUCTURE",
+              "MANAGEMENT",
+              "BASIC_INFORMATION",
+              "OTHER"
+            ]
+          },
+          "eventCodes": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Limit events based on their categories and property values of the events per event code.",
+        "example": {
+          "eventCategory": "BASIC_INFORMATION",
+          "eventCodes": [
+            "NAME_CHANGED",
+            "ACTIVE_CHANGED"
+          ]
+        },
+        "discriminator": {
+          "propertyName": "eventCategory",
+          "mapping": {
+            "BASIC_INFORMATION": "#/components/schemas/ApiBasicInformationCategoryFilter",
+            "FINANCIAL_INFORMATION": "#/components/schemas/ApiFinancialInformationCategoryFilter",
+            "INSOLVENCY_INACTIVITY": "#/components/schemas/ApiInsolvencyInactivityCategoryFilter",
+            "MANAGEMENT": "#/components/schemas/ApiManagementCategoryFilter",
+            "OWNERSHIP_GROUP_STRUCTURE": "#/components/schemas/ApiOwnershipCategoryFilter",
+            "PAYMENT_ABILITY": "#/components/schemas/ApiPaymentAbilityCategoryFilter",
+            "REGISTRATION_STATUS": "#/components/schemas/ApiRegistrationStatusCategoryFilter",
+            "RISK": "#/components/schemas/ApiRiskCategoryFilter"
+          }
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ApiBasicInformationCategoryFilter"
+          },
+          {
+            "$ref": "#/components/schemas/ApiFinancialInformationCategoryFilter"
+          },
+          {
+            "$ref": "#/components/schemas/ApiInsolvencyInactivityCategoryFilter"
+          },
+          {
+            "$ref": "#/components/schemas/ApiManagementCategoryFilter"
+          },
+          {
+            "$ref": "#/components/schemas/ApiOwnershipCategoryFilter"
+          },
+          {
+            "$ref": "#/components/schemas/ApiPaymentAbilityCategoryFilter"
+          },
+          {
+            "$ref": "#/components/schemas/ApiRegistrationStatusCategoryFilter"
+          },
+          {
+            "$ref": "#/components/schemas/ApiRiskCategoryFilter"
+          }
+        ]
+      },
+      "ApiEventSortCriteria": {
+        "type": "object",
+        "properties": {
+          "sortBy": {
+            "type": "string",
+            "description": "Sorting property for events.",
+            "default": "REGISTRATION_DATE",
+            "enum": [
+              "EVENT_DATE",
+              "REGISTRATION_DATE",
+              "NAME",
+              "LIMIT",
+              "RATING"
+            ]
+          },
+          "sortDirection": {
+            "type": "string",
+            "description": "Sorting direction for events.",
+            "default": "DESC",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          }
+        },
+        "description": "Sorting of the events."
+      },
+      "ApiFinancialInformationCategoryFilter": {
+        "required": [
+          "eventCategory"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiEventCategoryFilter"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventCodes": {
+                "uniqueItems": true,
+                "type": "array",
+                "description": "The event codes to which to limit the events in the category",
+                "items": {
+                  "type": "string",
+                  "description": "The event codes to which to limit the events in the category",
+                  "enum": [
+                    "CAPITAL_CHANGED",
+                    "CAPITAL_CHANGED_INCREASED_NOTIFIED",
+                    "CAPITAL_CHANGED_REDUCTION",
+                    "CAPITAL_CHANGED_REDUCTION_NOTIFIED",
+                    "CHANGE_ARTICLES_OF_ASSOCIATION_FINANCIAL_YEAR_NOTIFIED",
+                    "CHATTEL_MORTGAGE",
+                    "CHATTEL_MORTGAGE_TOTAL_AMOUNT",
+                    "CLAIMS_BANKRUPT_COMPANIES",
+                    "CONVERSION_SHARES",
+                    "FISCAL_PERIOD_CHANGED",
+                    "ISSUE_BONUS_SHARES",
+                    "ISSUE_NEW_SHARES",
+                    "NEW_ANNUAL_ACCOUNTS",
+                    "NEW_ANNUAL_ACCOUNT_NEW_COMPANY",
+                    "NEW_GROUP_ACCOUNTS",
+                    "NEW_INCOME_DECLARATION_SUBMITTED",
+                    "REAL_ESTATE_DECREASE",
+                    "REAL_ESTATE_INCREASE",
+                    "AUDITOR_REMARK_QUALIFICATION_NOT_DETERMINE_CATEGORY",
+                    "AUDITOR_REMARK_ADDITIONAL_INFORMATION_DETERMINE_CATEGORY",
+                    "AUDITOR_REMARK_QUALIFICATION_TAXES_VAT",
+                    "AUDITOR_REMARK_ADDITIONAL_INFORMATION_TAXES_VAT",
+                    "AUDITOR_REMARK_QUALIFICATION_EQUITY",
+                    "AUDITOR_REMARK_ADDITIONAL_INFORMATION_EQUITY",
+                    "AUDITOR_REMARK_QUALIFICATION_EQUITY_LOST_50",
+                    "AUDITOR_REMARK_ADDITIONAL_INFORMATION_EQUITY_LOST_50",
+                    "AUDITOR_REMARK_QUALIFICATION_LOAN_SHAREHOLDERS_OWNERS",
+                    "AUDITOR_REMARK_ADDITIONAL_INFORMATION_LOAN_SHAREHOLDERS_OWNERS",
+                    "AUDITOR_REMARK_QUALIFICATION_LOAN_SHAREHOLDERS_OWNERS_SETTLED",
+                    "AUDITOR_REMARK_ADDITIONAL_INFORMATION_LOAN_SHAREHOLDERS_OWNERS_SETTLED",
+                    "AUDITOR_REMARK_QUALIFICATION_GOING_CONCERN",
+                    "AUDITOR_REMARK_ADDITIONAL_INFORMATION_GOING_CONCERN",
+                    "AUDITOR_REMARK_QUALIFICATION_ANNUALS_REPORT_ABROAD",
+                    "AUDITOR_REMARK_ADDITIONAL_INFORMATION_ANNUALS_REPORT_ABROAD",
+                    "AUDITOR_REMARK_QUALIFICATION_NOT_FAIR_VIEW",
+                    "AUDITOR_REMARK_ADDITIONAL_INFORMATION_NOT_FAIR_VIEW",
+                    "AUDITOR_REMARK_QUALIFICATION_DELAYED_ANNUAL_REPORT",
+                    "AUDITOR_REMARK_ADDITIONAL_INFORMATION_DELAYED_ANNUAL_REPORT",
+                    "AUDITOR_REMARK_QUALIFICATION_VALUATION",
+                    "AUDITOR_REMARK_ADDITIONAL_INFORMATION_VALUATION",
+                    "AUDITOR_REMARK_QUALIFICATION_FINANCIAL_ACT_NOT_RESPECTED",
+                    "AUDITOR_REMARK_ADDITIONAL_INFORMATION_FINANCIAL_ACT_NOT_RESPECTED",
+                    "ACQUISITION_OF_OWN_SHARE_AUTHORISED",
+                    "AGREED_PLEDGE_IN_OWN_SHARE_AUTHORISED",
+                    "ANNUAL_ACCOUNTS_APPROVAL_CANCELLED",
+                    "AUDIT_OF_ANNUAL_ACCOUNTS",
+                    "AUDIT_OF_ANNUAL_ACCOUNTS_CORRECTED",
+                    "CAPITAL_CORRECTED",
+                    "COMPULSORY_LIQUIDATION_FOR_MISSING_CAPITAL_NOTIFIED",
+                    "COMPULSORY_TRANSFER_OF_SHARES_IN_SUBSIDIARY",
+                    "CONVERTIBLE_LOAN",
+                    "CONVERTIBLE_LOAN_AUTHORISED",
+                    "DEPOSITED_AMOUNT_RELEASED",
+                    "DISTRIBUTION_DIVIDENDS_AUTHORISED",
+                    "DISTRIBUTION_OF_DIVIDENDS",
+                    "DISTRIBUTION_OF_GROUP_CONTRIBUTION",
+                    "DISTRIBUTION_OF_GROUP_CONTRIBUTION_COMPLETED",
+                    "DISTRIBUTION_OF_SHARE_DIVIDENDS",
+                    "FINANCIAL_ASSISTANCE_TO_ACQUIRE_SHARES_STATEMENT",
+                    "INCREASE_OF_CAPITAL_AUTHORISED",
+                    "INTERIM_BALANCE_SHEET_APPROVED",
+                    "REDUCTION_OF_SHARE_PREMIUM_RESERVE",
+                    "REDUCTION_OF_CAPITAL",
+                    "SETTLEMENT_OF_CLAIM_FOR_SHARE_CONTRIBUTION_DELAYED",
+                    "SHARE_PREMIUM_RESERVE_REDUCTION",
+                    "TRANSITION_TO_SHARE_REGISTER_VPS",
+                    "WARRANT_SHARES_REGISTERED"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ApiInsolvencyInactivityCategoryFilter": {
+        "required": [
+          "eventCategory"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiEventCategoryFilter"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventCodes": {
+                "uniqueItems": true,
+                "type": "array",
+                "description": "The event codes to which to limit the events in the category",
+                "items": {
+                  "type": "string",
+                  "description": "The event codes to which to limit the events in the category",
+                  "enum": [
+                    "BANKRUPT",
+                    "BANKRUPTCY_CASE_RECEIVED",
+                    "BANKRUPTCY_CLAIMS_CONFIRMED",
+                    "BANKRUPTCY_CLOSED",
+                    "BANKRUPTCY_COMPLETED_SURPLUS",
+                    "BANKRUPTCY_COMPLETED_WITHOUT_SURPLUS",
+                    "BANKRUPTCY_DECISION_CANCELED_REGISTERED",
+                    "BANKRUPTCY_DECLARED_BANKRUPT",
+                    "BANKRUPTCY_INITIATED",
+                    "BANKRUPTCY_LAPSED",
+                    "BANKRUPTCY_LAPSED_RESTRUCTURING",
+                    "BANKRUPTCY_PARENT_COMPANY",
+                    "BANKRUPTCY_PETITION",
+                    "BANKRUPTCY_PETITION_BY_CREDITOR",
+                    "BANKRUPTCY_PETITION_BY_DEBTOR",
+                    "BANKRUPTCY_PETITION_CANCELLED",
+                    "BANKRUPTCY_PETITION_REJECTED",
+                    "BANKRUPTCY_PROCEEDINGS_CLOSED_REGISTERED",
+                    "BANKRUPTCY_PROOF_DEBT_PROCESSION",
+                    "BANKRUPTCY_PUBLIC_PROCESSION",
+                    "BANKRUPTCY_REQUEST",
+                    "BANKRUPTCY_SETTLEMENT",
+                    "BANKRUPTCY_SUBSIDIARY",
+                    "BANKRUPTCY_WITHDRAWN",
+                    "BUSINESS_DEBT_RECONSTRUCTION_INITIATED",
+                    "CEASED_TRADING_DELETED",
+                    "COMPANY_CEASED",
+                    "COMPANY_DELETED",
+                    "COMPANY_DEREGISTERED",
+                    "COMPANY_INACTIVE",
+                    "COMPULSORY_LIQUIDATED",
+                    "COMPULSORY_LIQUIDATION_REQUEST",
+                    "COMPULSORY_WINDING_UP_DECLARED",
+                    "COMPULSORY_WINDING_UP_MISSING_ROLES",
+                    "COMPULSORY_WINDING_UP_MISSING_ACCOUNTS",
+                    "DECEASED",
+                    "DEREGISTRATION_NOTIFIED",
+                    "DISCONTINUED",
+                    "DISSOLVED",
+                    "DISSOLVED_AFTER_BANKRUPTCY",
+                    "DISSOLVED_AFTER_DEMERGER",
+                    "DISSOLVED_AFTER_LIQUIDATION",
+                    "DISSOLVED_AFTER_MERGER",
+                    "DISSOLVED_BY_DEMERGER",
+                    "EMIGRATED",
+                    "HEADQUARTER_DISSOLVED",
+                    "IMMIGRATED",
+                    "INDIVIDUAL_DEBT_RECONSTRUCTION_DETERMINED",
+                    "INDIVIDUAL_DEBT_RECONSTRUCTION_INITIATED",
+                    "INDIVIDUAL_DEBT_RECONSTRUCTION_REVOKED",
+                    "INDIVIDUAL_DEBT_RECONSTRUCTION_WITHDRAWN",
+                    "INJUNCTION_LIQUIDATION_REGISTERED",
+                    "LIQUIDATION_ANNOUNCEMENT",
+                    "LIQUIDATION_CANCELLED",
+                    "LIQUIDATION_CLOSURE_REGISTERED",
+                    "LIQUIDATION_COMPLETED",
+                    "LIQUIDATION_CONTINUES",
+                    "LIQUIDATION_CONTINUING_REGISTERED",
+                    "LIQUIDATION_PROCESS_CANCELLED_BUSINESS_RESUME_REGISTERED",
+                    "LIQUIDATION_REOPENED",
+                    "VOLUNTARY_LIQUIDATION",
+                    "LIQUIDATION_STARTED",
+                    "NOT_ACTIVE",
+                    "RECONSTRUCTION_COMPLETED",
+                    "RECONSTRUCTION_INITIATED",
+                    "RECONSTRUCTION_REQUEST",
+                    "RECONSTRUCTION_STARTED",
+                    "RESTRUCTURING_BY_CREDITOR",
+                    "RESTRUCTURING_BY_DEBTOR",
+                    "RESTRUCTURING_DECISION_PROCESS_OPENING",
+                    "RESTRUCTURING_DISCONTINUED",
+                    "RESTRUCTURING_PETITION_CANCELLED",
+                    "RESTRUCTURING_PETITION_REJECTED",
+                    "RESTRUCTURING_PETITION_UNFINISHED",
+                    "RESTRUCTURING_PROGRAMME_CONFIRMED",
+                    "RESTRUCTURING_PROGRAMME_EXPIRED",
+                    "RESTRUCTURING_PROGRAMME_LAPSED",
+                    "RESTRUCTURING_PROHIBITION_OF_MEASURES",
+                    "STATUS_DECLARED_LIQUIDATION",
+                    "TRADE_PROHIBITION",
+                    "VOLUNTARY_WINDING_UP",
+                    "ANNUAL_ACCOUNTS_APPROVED",
+                    "ASSUMED_DEAD_BUSINESS_REGISTERED",
+                    "BANKRUPTCY_IN_HOME_COUNTRY",
+                    "CANCELLATION_COMPULSORY_DEBT_SETTLEMENT_CONFIRMED",
+                    "CANCELLATION_COMPULSORY_LIQUIDATION",
+                    "CANCELLATION_OF_BANKRUPTCY_PROCEEDINGS",
+                    "COMMENCEMENT_OF_BANKRUPTCY_PROCEEDINGS",
+                    "COMPULSORY_DEBT_SETTLEMENT_INITIATED",
+                    "COMPULSORY_DISSOLUTION_BA_LIMITED_LIABILITY",
+                    "COMPULSORY_DISSOLUTION_BBL_HOUSE_BUILDING_COOPERATIVE",
+                    "COMPULSORY_LIQUIDATION",
+                    "COMPULSORY_LIQUIDATION_BBL_HOUSE_BUILDING_COOPERATIVE",
+                    "COMPULSORY_LIQUIDATION_RESTRUCTURING_NOTIFIED",
+                    "CONTINUATION_OF_RECEIVERSHIP",
+                    "DISSOLUTION_DECISION_CANCELLED",
+                    "DISSOLUTION_IN_HOME_COUNTRY",
+                    "FOREIGN_INSOLVENCY",
+                    "NOTIFICATION_FROM_THE_REGISTER_OF_BANKRUPTCIES_CHANGED",
+                    "RECONSTRUCTION_CONFIRMED",
+                    "RECONSTRUCTION_NEGOTIATION_INITIATED",
+                    "RETURNED_ESTATE",
+                    "STRIKING_OFF_ANULLED",
+                    "TERMINATION_OF_RECEIVERSHIP",
+                    "VOLUNTARY_DEBT_SETTLEMENT_PROCEEDINGS_INITIATED"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ApiLimitChangedEventRestriction": {
+        "required": [
+          "eventCode",
+          "restrictionType"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiRiskEventCodeFilter"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "restrictionType": {
+                "type": "string",
+                "description": "Restriction on LIMIT_CHANGED events.",
+                "enum": [
+                  "ANY",
+                  "DECREASE",
+                  "INCREASE"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ApiManagementCategoryFilter": {
+        "required": [
+          "eventCategory"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiEventCategoryFilter"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventCodes": {
+                "uniqueItems": true,
+                "type": "array",
+                "description": "The event codes to which to limit the events in the category",
+                "items": {
+                  "type": "string",
+                  "description": "The event codes to which to limit the events in the category",
+                  "enum": [
+                    "AUDITOR_CHANGED",
+                    "AUDITOR_DESELECTED",
+                    "AUDITOR_NOT_CHOSEN_WAIVE_AUDIT",
+                    "AUDITOR_SELECTED",
+                    "BOARDMEMBER_CHANGED",
+                    "CHAIRMAN_CHANGED",
+                    "CHANGE_AUDITOR_NOTIFIED",
+                    "CHANGE_BOARD_CEO_AUTHORIZED_SIGNATORY_NOTIFIED",
+                    "EXIT_AUDITOR_ALTERNATE_BOARDMEMBER_NOTIFIED",
+                    "EXIT_BOARD_MEMBER_CEO_AUTHORIZED_SIGNATORY_NOTIFIED",
+                    "MANAGEMENT_CHANGED",
+                    "MANAGING_DIRECTOR_CHANGED",
+                    "PARTIAL_BOARD_CHANGED",
+                    "PARTIAL_BOARD_CHANGE_NOT_COMPLETE",
+                    "PARTIAL_BOARD_CHANGE_UNAUTHORIZED",
+                    "TOTAL_BOARD_CHANGED",
+                    "TOTAL_BOARD_CHANGE_NOT_UNAUTHORIZED",
+                    "AUDITOR_CORRECTED",
+                    "AUTHORIZED_SIGNATORY_NOTIFIED_CHANGED",
+                    "BOARD_CHANGED",
+                    "BOARD_CORRECTED",
+                    "GENERAL_MANAGER_CHANGED",
+                    "GENERAL_MANAGER_CORRECTION",
+                    "GENERAL_MANAGER_OR_MANAGER_CORRECTED",
+                    "GENERAL_MANAGER_OR_MANAGER_CHANGED",
+                    "INDEPENDENT_SUBSCRIPTION_RIGHTS",
+                    "MANAGING_SHIPOWNER_CHANGED",
+                    "MANAGING_SHIPOWNER_CORRECTION",
+                    "NORWEGIAN_REPRESENTATIVE_CHANGED",
+                    "NORWEGIAN_REPRESENTATIVE_CORRECTED",
+                    "OWNER_CORRECTED",
+                    "PARTICIPANTS_CORRECTION",
+                    "POWER_OF_PROCURATION_CHANGED",
+                    "PRECLUSIVE_NOTIFICATION_TO_CREDITORS",
+                    "POWER_OF_PROCURATION_CORRECTED",
+                    "SIGNATURE_CORRECTED"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ApiOwnershipCategoryFilter": {
+        "required": [
+          "eventCategory"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiEventCategoryFilter"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventCodes": {
+                "uniqueItems": true,
+                "type": "array",
+                "description": "The event codes to which to limit the events in the category",
+                "items": {
+                  "type": "string",
+                  "description": "The event codes to which to limit the events in the category",
+                  "enum": [
+                    "ACQUISITION_MERGER_COMPLETED",
+                    "ACQUISITION_MERGER_INITIATED",
+                    "DEMERGER_ANNOUNCEMENT",
+                    "DEMERGER_CONCLUDED",
+                    "DEMERGER_EXPIRED",
+                    "DEMERGER_INITIATED",
+                    "DEMERGER_PERMISSION_REGISTERED",
+                    "DEMERGER_PROCESS_COMPLETED",
+                    "DEMERGER_PROCESS_DISCONTINUED",
+                    "DEMERGER_PROCESS_STARTED",
+                    "LIMITED_PARTNER_CHANGED",
+                    "MERGER_CASE_NOTIFIED",
+                    "MERGER_COMPLETED",
+                    "MERGER_DUE",
+                    "MERGER_INITIATED",
+                    "MERGER_PERMISSION_APPLICATION",
+                    "MERGER_PROCESS_COMPLETED",
+                    "MERGER_PROCESS_DISCONTINUED",
+                    "MERGER_PROCESS_STARTED",
+                    "MERGER_WITH",
+                    "MOVED_GROUP",
+                    "PARENT_COMPANY_CHANGED",
+                    "PARTNER_CHANGE_MISSING",
+                    "PARTNER_CHANGE_NOT_COMPLETE",
+                    "PARTOWNERS_CHANGED",
+                    "PARTOWNERS_CHANGE_NOT_COMPLETE",
+                    "SPLIT_ANNOUNCEMENT",
+                    "TRANSFEREE_DEMERGER_COMPLETED",
+                    "TRANSFEREE_DEMERGER_INITIATED",
+                    "ULTIMATE_PARENT_COMPANY_CHANGED",
+                    "UNLIMITED_PARTNER_CHANGED",
+                    "COMPLETION_OF_DEMERGER",
+                    "COMPLETION_OF_MERGER",
+                    "DECISION_TO_DEMERGE_REVERSED",
+                    "DEMERGER_PLAN_NOTIFIED",
+                    "GENERAL_PARTNER_CHANGED",
+                    "GENERAL_PARTNER_CORRECTED",
+                    "JUDGEMENT_ON_INVALID_DEMERGER",
+                    "JUDGEMENT_ON_INVALID_MERGER",
+                    "MERGER_PLAN_ANNOUNCED",
+                    "MERGER_PLAN_INTERRUPTED",
+                    "OWNERSHIP_CHANGED",
+                    "PARTICIPANTS_CHANGED",
+                    "REVERSAL_OF_THE_DECISION_TO_DEMERGE",
+                    "REVERSAL_OF_THE_DECISION_TO_MERGE",
+                    "STRIKING_OFF_AFTER_DE_MERGER",
+                    "STRIKING_OFF_AFTER_MERGER",
+                    "THE_DECISION_TO_MERGE_REVERSED"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ApiPaymentAbilityCategoryFilter": {
+        "required": [
+          "eventCategory"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiEventCategoryFilter"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventCodes": {
+                "uniqueItems": true,
+                "type": "array",
+                "description": "The event codes to which to limit the events in the category",
+                "items": {
+                  "type": "string",
+                  "description": "The event codes to which to limit the events in the category",
+                  "enum": [
+                    "COURT_JUDGEMENT_IN_CONCILIATION_BOARD",
+                    "DEBT_BALANCE_CLOSED",
+                    "DEBT_BALANCE_OPENED",
+                    "DEBT_COLLECTION",
+                    "DEBT_COLLECTION_WITH_ACTIONS_COURT_PROCEEDINGS",
+                    "DEBT_COLLECTION_WITH_CONTINUATED_PROCEEDINGS",
+                    "DEBT_COLLECTION_WITH_NONPAYMENT_INSTALMENT",
+                    "DEDUCTION_IN_SALARY",
+                    "DISTRAINT",
+                    "DISTRAINT_NOT_PAID",
+                    "INJUNCTION_ALLOWANCE_CLAIMS",
+                    "INJUNCTION_CONGESTION_CLAIMS",
+                    "INJUNCTION_CUSTOMS_IMPORT_CLAIMS",
+                    "INJUNCTION_GOVERNMENTAL_CLAIMS",
+                    "INJUNCTION_JUDGEMENT_DEFAULT_CLAIMS",
+                    "INJUNCTION_JUDGEMENT_DEFAULT_DELETED",
+                    "INJUNCTION_LAND_SURVEY_CLAIM",
+                    "INJUNCTION_NON_NORDIC_TAX_CLAIMS",
+                    "INJUNCTION_NORDIC_TAX_CLAIMS",
+                    "INJUNCTION_PAY_TO_COURT",
+                    "INJUNCTION_REAL_ESTATE_TAX_CLAIMS",
+                    "INJUNCTION_ROAD_FEE_CLAIMS",
+                    "INJUNCTION_SPECIAL_FEE_CLAIM",
+                    "INJUNCTION_STUDY_CLAIM",
+                    "INJUNCTION_TAX_ACCOUNT_CLAIMS",
+                    "INJUNCTION_TRAFFIC_TAX_CLAIMS",
+                    "INTERIM_COURT_ORDER",
+                    "LEASING_AGREEMENT",
+                    "MORTGAGE_IN_AGRICULTURAL_INDUSTRY",
+                    "MORTGAGE_IN_AQUACULTURE_LICENCE",
+                    "MORTGAGE_IN_FACTORING_AGREEMENT",
+                    "MORTGAGE_IN_FISHING_EQUIPMENT",
+                    "MORTGAGE_IN_INVENTORY",
+                    "MORTGAGE_IN_MACHINERY_AND_PLANT",
+                    "MORTGAGE_IN_MOTOR_VEHICLE",
+                    "MORTGAGE_IN_MOTOR_VEHICLE_FIXED_ASSETS",
+                    "NOTHING_FOR_DISTRAINT",
+                    "ORDER_TO_PAY",
+                    "ORDER_TO_PAY_FEE_ANNUAL_REPORT_OVERDUE",
+                    "ORDER_TO_PAY_GOVERNMENTAL_CLAIMS",
+                    "ORDER_TO_PAY_INFRASTRUCTURE_CLAIM",
+                    "ORDER_TO_PAY_PARKING_OVERDUE",
+                    "ORDER_TO_PAY_PASSED_COURT",
+                    "ORDER_TO_PAY_PASSED_COURT_ASSET_RECOVERY",
+                    "PAYMENT_INDEX_CHANGED",
+                    "PETITION_INJUNCTION_PAY",
+                    "PETITION_INJUNCTION_PAY_DEPRECIATED",
+                    "PETITION_INJUNCTION_PAY_PARTLY_DENIED",
+                    "PETITION_INJUNCTION_PAY_TOTAL_DENIED",
+                    "PETITION_INJUNCTION_PAY_WITHDRAWN",
+                    "PROTEST_OF_BILL_NONPUBLIC",
+                    "PROTEST_OF_BILL_PUBLIC",
+                    "PUBLIC_SUMMONS_CREDITORS",
+                    "REMARK_DEFAULT_HIREPURCHASE",
+                    "REMARK_ENFORCEMENT",
+                    "REMARK_LENGTHY_ENFORCEMENT",
+                    "REMARK_LIMITED_ENFORCEMENT",
+                    "REMARK_PAYMENT_DEMAND",
+                    "REMARK_REPOSSESSION_OF_GOODS",
+                    "REMARK_TAX_UNACCOUNTED",
+                    "REMARK_UNILATERAL_ON_PAYMENT_DEMAND",
+                    "REPOSSESSION_GOODS",
+                    "SEIZURE",
+                    "SHARE_CAPITAL_LOST"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ApiRatingChangedEventRestriction": {
+        "required": [
+          "eventCode",
+          "restrictionType"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiRiskEventCodeFilter"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "restrictionType": {
+                "type": "string",
+                "description": "Restriction on the change values in the RATING_CHANGED events.",
+                "enum": [
+                  "ANY",
+                  "DECREASE",
+                  "INCREASE",
+                  "THRESHOLD"
+                ]
+              },
+              "increaseThreshold": {
+                "type": "string",
+                "description": "The threshold that needs to be passed for an increasing rating to be part of the search result when restriction type THRESHOLD is selected.",
+                "enum": [
+                  "AAA",
+                  "AA",
+                  "A",
+                  "B",
+                  "C"
+                ]
+              },
+              "decreaseThreshold": {
+                "type": "string",
+                "description": "The threshold that needs to be passed for an decreasing rating to be part of the search result when restriction type THRESHOLD is selected.",
+                "enum": [
+                  "AAA",
+                  "AA",
+                  "A",
+                  "B",
+                  "C"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ApiRegistrationStatusCategoryFilter": {
+        "required": [
+          "eventCategory"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiEventCategoryFilter"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventCodes": {
+                "uniqueItems": true,
+                "type": "array",
+                "description": "The event codes to which to limit the events in the category",
+                "items": {
+                  "type": "string",
+                  "description": "The event codes to which to limit the events in the category",
+                  "enum": [
+                    "ALCOHOL_PERMITS_ADDED",
+                    "ALCOHOL_PERMITS_REMOVED",
+                    "BLOCK",
+                    "CHANGE_MARITAL_STATUS",
+                    "DEREGISTERED_FOR_BUSINESS_CEASED",
+                    "DEREGISTERED_FTAX_ACCOUNTING_PAYMENT",
+                    "DEREGISTERED_FTAX_BUSINESS_CEASED",
+                    "DEREGISTERED_FTAX_DECLARATION_MISSING",
+                    "DEREGISTERED_FTAX_INCOMPLETE_ACCOUNTING_PAYMENT",
+                    "DEREGISTERED_FTAX_NEGLECT_COMPANY",
+                    "DEREGISTERED_FTAX_NEGLECT_COMPANY_MANAGEMENT",
+                    "DEREGISTERED_FTAX_OWN_REQUEST",
+                    "EMPLOYER_REGISTER_ADDED",
+                    "EMPLOYER_REGISTER_REMOVED",
+                    "NOT_REGISTERED_FTAX",
+                    "NUMBER_OF_EMPLOY",
+                    "PREPAYMENT_REGISTER_ADDED",
+                    "PREPAYMENT_REGISTER_REMOVED",
+                    "REGISTERED_FTAX",
+                    "TRADE_REGISTER_ADDED",
+                    "TRADE_REGISTER_REMOVED",
+                    "TRUSTEE_APPOINTED",
+                    "UNBLOCK",
+                    "VAT_ACTIVE",
+                    "VAT_NOT_ACTIVE",
+                    "VAT_NOT_REGISTERED",
+                    "VAT_REGISTERED",
+                    "VAT_REGISTER_ADDED",
+                    "VAT_REGISTER_REMOVED",
+                    "ESTABLISHMENT_PLAN_FOR_SOCIETAS_EUROPEA",
+                    "NEW_REGISTRY_BUSINESS_ENTERPRISES_REGISTRATION",
+                    "REGISTRATION_ANNULLED",
+                    "REGISTRY_OF_BUSINESS_ENTERPRISES_RE_REGISTRATION",
+                    "RESTRUCTURING_FOR_DISSOLUTION",
+                    "RESTRUCTURING_FOR_DIVISION",
+                    "RESTRUCTURING_FOR_MERGER",
+                    "REVERSAL_OF_DISSOLUTION",
+                    "STRIKING_OFF",
+                    "TERMS_ESTABLISHMENT_SOCIETAS_EUROPEA_COMPLETED"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ApiRiskCategoryFilter": {
+        "required": [
+          "eventCategory"
+        ],
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApiEventCategoryFilter"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventCodes": {
+                "uniqueItems": true,
+                "type": "array",
+                "description": "The event codes to which to limit the events in the category",
+                "items": {
+                  "type": "string",
+                  "description": "The event codes to which to limit the events in the category",
+                  "enum": [
+                    "DEBT_NEGOTIATION",
+                    "ERRORS_IN_ANNUAL_ACCOUNTS",
+                    "FOREIGN_HEADQUARTER_DISSOLVED",
+                    "LIMIT_CHANGED",
+                    "NOTICE_TO_CREDITORS_AUDITOR_RESIGNED",
+                    "NOTICE_TO_CREDITORS_CHAIRMAN_RESIGNED",
+                    "NOTICE_TO_CREDITORS_DELETED_AUDITOR_RESIGNED",
+                    "NOTICE_TO_CREDITORS_DELETED_CHAIRMAN_OF_THE_BOARD_RESIGNED",
+                    "NOTICE_TO_CREDITORS_DELETED_WHOLE_BOARD_RESIGNED",
+                    "NOTICE_TO_CREDITORS_TOTAL_BOARD_RESIGNED",
+                    "RATING_CHANGED",
+                    "RISK_EXPOSED_RATING_CHANGED",
+                    "SCORING_CHANGED",
+                    "SPECIAL_EVENT_REGISTERED"
+                  ]
+                }
+              },
+              "eventCodeFilter": {
+                "type": "array",
+                "description": "Limitations on the events in this category. Does not exclude events based on code, but imposes restrictions on events with these codes.",
+                "items": {
+                  "$ref": "#/components/schemas/ApiRiskEventCodeFilter"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ApiRiskEventCodeFilter": {
+        "required": [
+          "eventCode"
+        ],
+        "type": "object",
+        "properties": {
+          "eventCode": {
+            "type": "string",
+            "enum": [
+              "RATING_CHANGED",
+              "LIMIT_CHANGED"
+            ]
+          }
+        },
+        "description": "Limitations on the events in this category. Does not exclude events based on code, but imposes restrictions on events with these codes.",
+        "discriminator": {
+          "propertyName": "eventCode",
+          "mapping": {
+            "RATING_CHANGED": "#/components/schemas/ApiRatingChangedEventRestriction",
+            "LIMIT_CHANGED": "#/components/schemas/ApiLimitChangedEventRestriction"
+          }
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ApiRatingChangedEventRestriction"
+          },
+          {
+            "$ref": "#/components/schemas/ApiLimitChangedEventRestriction"
+          }
+        ]
+      },
+      "PageCriteria": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "minimum": 0,
+            "type": "integer",
+            "description": "Zero-based page index (0..N)",
+            "format": "int32",
+            "default": 0
+          },
+          "size": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "The size of the page to be returned",
+            "format": "int32",
+            "default": 20
+          }
+        },
+        "description": "The page number and size."
+      },
+      "Amount": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string"
+          }
+        },
+        "description": "The amount of the Payment Remark."
+      },
+      "ApiEventCompany": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "SE",
+              "FI",
+              "NO",
+              "DK"
+            ]
+          },
+          "registrationNumber": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "rating": {
+            "$ref": "#/components/schemas/Code"
+          },
+          "duns": {
+            "type": "string"
+          },
+          "references": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "NOTSTARTED_OR_DORMANT"
+            ]
+          }
+        }
+      },
+      "ApiMonitoringEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "eventDate": {
+            "type": "string",
+            "description": "The date when the event reached DNB monitoring systems.",
+            "format": "date-time"
+          },
+          "registrationDate": {
+            "pattern": "yyyy-MM-dd",
+            "type": "string",
+            "description": "The date when the event occurred.",
+            "format": "date-time"
+          },
+          "companyInformation": {
+            "$ref": "#/components/schemas/ApiEventCompany"
+          },
+          "details": {
+            "$ref": "#/components/schemas/EventDetails"
+          },
+          "changeTypeInformation": {
+            "$ref": "#/components/schemas/ChangeTypeInformation"
+          }
+        }
+      },
+      "ApiMonitoringEventPage": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiMonitoringEvent"
+            }
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalEvents": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Change": {
+        "type": "object",
+        "properties": {
+          "oldValue": {
+            "$ref": "#/components/schemas/ChangeValue"
+          },
+          "newValue": {
+            "$ref": "#/components/schemas/ChangeValue"
+          }
+        }
+      },
+      "ChangeTypeInformation": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "DISCLAIMER",
+              "PAID"
+            ]
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "description": "Updated information about received events"
+      },
+      "ChangeValue": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of value.",
+            "enum": [
+              "CODE",
+              "PLAIN",
+              "STRUCTURED"
+            ]
+          }
+        },
+        "description": "The new value of the company field which has changed.",
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "EventDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/EventType"
+          },
+          "change": {
+            "$ref": "#/components/schemas/Change"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Amount"
+          },
+          "comment": {
+            "type": "string",
+            "description": "Replaced by the 'description' property.",
+            "deprecated": true
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "EventType": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "The code which identifies a specific monitoring event.",
+            "example": "NAME_CHANGED, RATING_CHANGED"
+          },
+          "category": {
+            "type": "string",
+            "description": "The events are grouped in categories according to their type. For example, NAME_CHANGED events belong to the BASIC_INFORMATION category.",
+            "example": "BASIC_INFORMATION, RISK",
+            "enum": [
+              "INSOLVENCY_INACTIVITY",
+              "RISK",
+              "PAYMENT_ABILITY",
+              "REGISTRATION_STATUS",
+              "FINANCIAL_INFORMATION",
+              "OWNERSHIP_GROUP_STRUCTURE",
+              "MANAGEMENT",
+              "BASIC_INFORMATION",
+              "OTHER"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed information of the event that took place.",
+            "example": "Rating changed, from B to AA"
+          }
+        }
+      },
+      "ApiCompanyExistsInPortfolioResponse": {
+        "type": "object",
+        "properties": {
+          "presentInPortfolio": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApiEventSearchCriteria": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "pattern": "yyyy-MM-ddThh:mm:ss",
+            "type": "string",
+            "description": "The beginning of the interval for which to retrieve events, maximum one year back.",
+            "format": "date-time"
+          },
+          "endDate": {
+            "pattern": "yyyy-MM-ddThh:mm:ss",
+            "type": "string",
+            "description": "The end of the interval for which to retrieve events.",
+            "format": "date-time"
+          },
+          "eventFilters": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiEventCategoryFilter"
+            }
+          },
+          "countries": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Two-digit country codes of the companies",
+              "example": "SE",
+              "enum": [
+                "SE",
+                "FI",
+                "NO",
+                "DK"
+              ]
+            }
+          },
+          "language": {
+            "type": "string",
+            "description": "The language used for the events descriptions.",
+            "example": "en",
+            "default": "en",
+            "enum": [
+              "dk",
+              "en",
+              "fi",
+              "no",
+              "sv"
+            ]
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageCriteria"
+          },
+          "sorting": {
+            "$ref": "#/components/schemas/ApiEventSortCriteria"
+          }
+        }
+      },
+      "ApiPortfolioResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ]
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "totalCompanies": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ApiFilterValue": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "description": "Will be removed without replacement. For now returns ALL possible values. Counts are always MAX_INT."
+      },
+      "ApiMonitoringEventResponseOld": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "$ref": "#/components/schemas/ApiMonitoringEventPage"
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "description": "Will be removed without replacement. For now returns ALL possible values. Counts are always MAX_INT.",
+              "deprecated": true,
+              "items": {
+                "$ref": "#/components/schemas/ApiFilterValue"
+              }
+            },
+            "description": "Will be removed without replacement. For now returns ALL possible values. Counts are always MAX_INT.",
+            "deprecated": true
+          }
+        }
+      },
+      "EventCodeDescription": {
+        "type": "object",
+        "properties": {
+          "eventCode": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiCompany": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "SE",
+              "FI",
+              "NO",
+              "DK"
+            ]
+          },
+          "registrationNumber": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "legalForm": {
+            "type": "string"
+          },
+          "rating": {
+            "$ref": "#/components/schemas/Code"
+          },
+          "duns": {
+            "type": "string"
+          },
+          "references": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "addedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "limit": {
+            "$ref": "#/components/schemas/ApiMonetaryAmount"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "NOTSTARTED_OR_DORMANT"
+            ]
+          },
+          "scoring": {
+            "$ref": "#/components/schemas/Scoring"
+          }
+        }
+      },
+      "ApiCompanyResponse": {
+        "type": "object",
+        "properties": {
+          "companies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiCompany"
+            }
+          },
+          "totalCompanies": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Scoring": {
+        "type": "object",
+        "properties": {
+          "riskPercentage": {
+            "type": "string"
+          },
+          "failureScore": {
+            "type": "string"
+          },
+          "exclusionCodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Code"
+            }
+          }
+        }
+      },
+      "ApiCategoryPage": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiCategoryResponse"
+            }
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCategories": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ApiPortfolioCompanyReference": {
+        "type": "object",
+        "properties": {
+          "referrerId": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "SE",
+              "FI",
+              "NO",
+              "DK"
+            ]
+          },
+          "registrationNumber": {
+            "type": "string",
+            "readOnly": true
+          },
+          "addedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "removedDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://login.bisnode.com/as/token.oauth2",
+            "scopes": {
+              "credit_data_monitoring": "credit_data_monitoring"
+            }
+          }
+        }
+      }
+    }
+  }
+}
